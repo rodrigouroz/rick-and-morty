@@ -1,24 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
+import { Container, Typography } from "@material-ui/core";
+import CharacterList from "./components/CharactersList";
+import { CharacterInterface, getCharacters } from "./lib/characters";
 import './App.css';
+import { useEffect, useState } from 'react';
 
 function App() {
+
+  const [ characters, setCharacters ] = useState<CharacterInterface[]>();
+
+  useEffect(() => {
+    async function fetchData() {
+      setCharacters(await getCharacters());
+    }
+    fetchData();
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Container>
+        <Typography variant="h1">
+          Rick and Morty characters
+        </Typography>
+        {characters && <CharacterList characters={characters} />}
+      </Container>
     </div>
   );
 }
