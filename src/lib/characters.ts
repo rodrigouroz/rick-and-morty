@@ -6,7 +6,7 @@ export interface CharacterInterface {
   image: string
 }
 
-interface APIResponse {
+export interface APIResponse {
   info: {
     count: number
     pages: number
@@ -16,12 +16,19 @@ interface APIResponse {
   results: CharacterInterface[]
 }
 
-const MAIN_URL = 'https://rickandmortyapi.com/api/character'
+const getUrl = (page?:number):string => {
+  let url = 'https://rickandmortyapi.com/api/character'
+  if (page) {
+    url += `/?page=${page}`
+  }
 
-export async function getCharacters(url?: string): Promise<CharacterInterface[]> {
-  const response = await(fetch(url || MAIN_URL))
+  return url;
+} 
+
+export async function getCharacters(page?:number): Promise<APIResponse> {
+  const response = await(fetch(getUrl(page)))
   const apiResponse:APIResponse = await(response.json())
 
-  return apiResponse.results
+  return apiResponse
 
 }
