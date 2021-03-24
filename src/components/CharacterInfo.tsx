@@ -1,39 +1,48 @@
-import classes from '*.module.css';
 import {
     Avatar,
     Dialog,
-    DialogTitle,
     ListItem,
     ListItemAvatar,
     ListItemText,
-    Typography,
-    Card,
-    CardActionArea,
-    Button,
-    CardActions,
-    CardContent,
-    CardMedia,
+    Grid,
     makeStyles,
+    createStyles,
+    Theme,
+    List,
+    Typography,
 } from '@material-ui/core';
-import React, { useState } from 'react';
-import { CharacterInterface } from '../lib/characters';
+import { useEffect, useState } from 'react';
+import { CharacterInterface, EpisodeInterface, getEpisodes } from '../lib/characters';
 
 interface CharactersInfoProps {
     character: CharacterInterface;
 }
 
-const useStyles = makeStyles({
-    root: {
-      maxWidth: 345,
-    },
-    media: {
-      height: 300,
-      width: 300
-    },
-  });
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            flexGrow: 1,
+            padding: 10
+        },
+        list: {
+            width: '100%',
+            backgroundColor: theme.palette.background.paper,
+        },
+    })
+);
 
 export default function CharacterInfo(props: CharactersInfoProps) {
     const [open, setOpen] = useState(false);
+
+    const [ episodes, setEpisodes ] = useState<EpisodeInterface[]>([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            const episodes: EpisodeInterface[] = await getEpisodes(props.character.episode);
+            setEpisodes(episodes)
+        }
+        fetchData();
+    }, [props.character.episode]);
 
     const onClose = () => setOpen(false);
 
@@ -46,37 +55,33 @@ export default function CharacterInfo(props: CharactersInfoProps) {
                 aria-labelledby='simple-dialog-title'
                 open={open}
             >
-                <Card className={classes.root}>
-                    <CardActionArea>
-                        <CardMedia
-                            className={classes.media}
-                            image={props.character.image}
-                            title={props.character.name}
-                        />
-                        <CardContent>
-                            <Typography
-                                gutterBottom
-                                variant='h5'
-                                component='h2'
-                            >
-                                {props.character.name}
-                            </Typography>
-                            <Typography
-                                variant='body2'
-                                color='textSecondary'
-                                component='p'
-                            >
-                                <div>Status: {props.character.status}</div>
-                                Species: {props.character.species}
-                            </Typography>
-                        </CardContent>
-                    </CardActionArea>
-                    <CardActions>
-                        <Button onClick={() => setOpen(false)} size='small' color='primary'>
-                            Close
-                        </Button>
-                    </CardActions>
-                </Card>
+                <div className={classes.root}>
+                    <Grid container spacing={3}>
+                        <Grid item sm={6}>
+                            <img
+                                alt={props.character.name}
+                                src={props.character.image}
+                            />
+                        </Grid>
+                        <Grid item sm={6} style={{paddingLeft: 30}}>
+                            <Typography variant="h4">{props.character.name}</Typography>
+                            <Typography variant="subtitle1">Species: {props.character.species}</Typography>
+                            <Typography variant="subtitle1">Status: {props.character.status}</Typography>
+                        </Grid>
+                        <Grid item sm={12}>
+                            <Typography variant="h6">Episodes</Typography>
+                            <div className={classes.list}>
+                                <List>
+                                    {episodes.map((episode) => 
+                                        <ListItem>
+                                            <ListItemText>({episode.episode}) - {episode.name}</ListItemText>
+                                        </ListItem>
+                                    )}
+                                </List>
+                            </div>
+                        </Grid>
+                    </Grid>
+                </div>
             </Dialog>
             <ListItem
                 style={{ cursor: 'pointer' }}
