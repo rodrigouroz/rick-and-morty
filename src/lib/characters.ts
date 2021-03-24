@@ -17,25 +17,33 @@ export interface APIResponse {
     info: {
         count: number;
         pages: number;
-        next: string;
-        prev: string;
+        next: string | null;
+        prev: string | null;
     };
     results: CharacterInterface[];
 }
 
-const getUrl = (page?: number): string => {
-    let url = 'https://rickandmortyapi.com/api/character';
-    if (page) {
-        url += `/?page=${page}`;
+export const getSearchUrl = (name: string): string => `https://rickandmortyapi.com/api/character?name=${name}`;
+
+export async function getCharacters(url?: string): Promise<APIResponse> {
+    const response = await fetch(
+        url || 'https://rickandmortyapi.com/api/character'
+    );
+    let apiResponse: APIResponse
+    if (response.ok) {
+      apiResponse = await response.json();
+    } else {
+      apiResponse = {
+        info: {
+          count: 0,
+          pages: 0,
+          next: null,
+          prev: null
+        },
+        results: []
+      }
     }
-
-    return url;
-};
-
-export async function getCharacters(page?: number): Promise<APIResponse> {
-    const response = await fetch(getUrl(page));
-    const apiResponse: APIResponse = await response.json();
-
+  
     return apiResponse;
 }
 
@@ -60,5 +68,5 @@ export async function getEpisodes(
 
     const result = await episodesInfoResponse.json();
 
-    return Array.isArray(result) ? result : [result]
+    return Array.isArray(result) ? result : [result];
 }

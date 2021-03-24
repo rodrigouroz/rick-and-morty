@@ -36,6 +36,12 @@ export default function CharacterInfo(props: CharactersInfoProps) {
 
     const [ episodes, setEpisodes ] = useState<EpisodeInterface[]>([]);
 
+    /**
+     * TODO: This is inefficient. We're getting the same episode info multiple times, as we get it per
+     * each character but there will be overlapping.
+     * A best solution would be to create a service that caches previously requested episodes so that it 
+     * doesnt fetch it again from the API
+     */
     useEffect(() => {
         async function fetchData() {
             const episodes: EpisodeInterface[] = await getEpisodes(props.character.episode);
@@ -73,7 +79,7 @@ export default function CharacterInfo(props: CharactersInfoProps) {
                             <div className={classes.list}>
                                 <List>
                                     {episodes.map((episode) => 
-                                        <ListItem>
+                                        <ListItem key={episode.episode}>
                                             <ListItemText>({episode.episode}) - {episode.name}</ListItemText>
                                         </ListItem>
                                     )}
