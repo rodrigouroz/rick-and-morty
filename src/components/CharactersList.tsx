@@ -1,7 +1,4 @@
-import {
-    List,
-    Button,
-} from '@material-ui/core';
+import { List, Button } from '@material-ui/core';
 import { CharacterInterface } from '../lib/characters';
 import CharacterInfo from './CharacterInfo';
 

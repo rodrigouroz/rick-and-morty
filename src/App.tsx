@@ -20,10 +20,11 @@ function App() {
     const [next, setNext] = useState<string | null>(null);
     const [characters, setCharacters] = useState<CharacterInterface[]>([]);
     const [q, setQ] = useState('');
-    const [ loaded, setLoaded ] = useState(false);
+    const [loaded, setLoaded] = useState(false);
     const searchTerm: string = useDebounce(q, 1000);
 
     /**
+     * TODO:
      * Avoid doing a fetch in three different places and extract to a function
      */
     useEffect(() => {
@@ -31,18 +32,20 @@ function App() {
             const response: APIResponse = await getCharacters();
             setNext(response.info.next);
             setCharacters(response.results);
-            setLoaded(response.info.count === response.results.length)
+            setLoaded(response.info.count === response.results.length);
         }
         fetchData();
     }, []);
 
     useEffect(() => {
-        async function fetchData(searchTerm:string) {
-            const searchParam = searchTerm ? getSearchUrl(searchTerm) : undefined
+        async function fetchData(searchTerm: string) {
+            const searchParam = searchTerm
+                ? getSearchUrl(searchTerm)
+                : undefined;
             const response: APIResponse = await getCharacters(searchParam);
             setNext(response.info.next);
             setCharacters(response.results);
-            setLoaded(response.info.count === response.results.length)
+            setLoaded(response.info.count === response.results.length);
         }
         fetchData(searchTerm);
     }, [searchTerm]);
@@ -55,7 +58,7 @@ function App() {
         const response: APIResponse = await getCharacters(next);
         setNext(response.info.next);
         setCharacters((characters) => characters.concat(response.results));
-        setLoaded(response.info.count === response.results.length)
+        setLoaded(response.info.count === response.results.length);
     };
 
     return (

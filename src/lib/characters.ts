@@ -23,27 +23,28 @@ export interface APIResponse {
     results: CharacterInterface[];
 }
 
-export const getSearchUrl = (name: string): string => `https://rickandmortyapi.com/api/character?name=${name}`;
+export const getSearchUrl = (name: string): string =>
+    `https://rickandmortyapi.com/api/character?name=${name}`;
 
 export async function getCharacters(url?: string): Promise<APIResponse> {
     const response = await fetch(
         url || 'https://rickandmortyapi.com/api/character'
     );
-    let apiResponse: APIResponse
+    let apiResponse: APIResponse;
     if (response.ok) {
-      apiResponse = await response.json();
+        apiResponse = await response.json();
     } else {
-      apiResponse = {
-        info: {
-          count: 0,
-          pages: 0,
-          next: null,
-          prev: null
-        },
-        results: []
-      }
+        apiResponse = {
+            info: {
+                count: 0,
+                pages: 0,
+                next: null,
+                prev: null,
+            },
+            results: [],
+        };
     }
-  
+
     return apiResponse;
 }
 
